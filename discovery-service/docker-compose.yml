@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    image: discovery-service
+    container_name: discovery-service-container
+    ports:
+      - "8761:8761"
+    networks:
+      - net
+networks:
+  net:
+    driver: bridge

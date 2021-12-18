@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    image: api-gateway
+    container_name: api-gateway
+    ports:
+      - "8762:8762"
+    networks:
+      - discovery-service_net
+networks:
+  discovery-service_net:
+    external: true

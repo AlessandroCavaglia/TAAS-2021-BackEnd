@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    image: eurka-client
+    container_name: eurka-client
+    ports:
+      - "8763:8763"
+    networks:
+      - discovery-service_net
+networks:
+  discovery-service_net:
+    external: true
