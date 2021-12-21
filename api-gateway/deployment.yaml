@@ -1,0 +1,20 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  selector:
+    matchLabels:
+      run: api-gateway
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: alessandrocavaglia/api-gateway
+          ports:
+            - containerPort: 8762

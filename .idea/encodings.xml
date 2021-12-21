@@ -3,9 +3,9 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/api-gateway" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/api-gateway/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/car-service" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/car-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/discovery-service" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/discovery-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eureka-client" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eureka-client/src/main/java" charset="UTF-8" />
   </component>
 </project>
