@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-microservice-database
+spec:
+  selector:
+    matchLabels:
+      run: user-microservice-database
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: user-microservice-database
+    spec:
+      containers:
+        - name: user-microservice-database
+          image: postgres
+          env:
+            - name: POSTGRES_DB
+              value: userdb
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: admin
+            - name: restart
+              value: unless-stopped
+          ports:
+            - containerPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-microservice-database
+  labels:
+    run: user-microservice-database
+spec:
+  clusterIP: 10.110.10.2
+  ports:
+    - port: 5432
+      protocol: TCP
+  selector:
+    run: user-microservice-database

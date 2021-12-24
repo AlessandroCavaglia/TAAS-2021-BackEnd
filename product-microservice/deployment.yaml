@@ -1,0 +1,20 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-microservice
+spec:
+  selector:
+    matchLabels:
+      run: product-microservice
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: product-microservice
+    spec:
+      containers:
+        - name: product-microservice
+          image: alessandrocavaglia/product-microservice
+          ports:
+            - containerPort: 8763

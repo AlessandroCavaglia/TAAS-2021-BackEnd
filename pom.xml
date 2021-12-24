@@ -9,7 +9,8 @@
     <name>cloud-parent</name>
     <modules>
         <module>discovery-service</module>
-        <module>car-service</module>
+        <module>user-microservice</module>
         <module>api-gateway</module>
+        <module>product-microservice</module>
     </modules>
 </project>

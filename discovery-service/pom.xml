@@ -8,11 +8,11 @@
         <version>2.2.5.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
+    <groupId>esameTAAS</groupId>
     <artifactId>discovery-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>eureka-service</name>
-    <description>Demo project for Spring Boot</description>
+    <name>discovery-service</name>
+    <description>Discovery service used to register services in the Unito TAAS exam</description>
 
     <properties>
         <java.version>11</java.version>

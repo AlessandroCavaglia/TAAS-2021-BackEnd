@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    image: alessandrocavaglia/user-microservice
+    container_name: user-microservice
+    ports:
+      - "8763:8763"
+    networks:
+      - discovery-service_net
+networks:
+  discovery-service_net:
+    external: true
