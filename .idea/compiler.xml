@@ -15,9 +15,9 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="api-gateway" target="1.8" />
-      <module name="cloud-parent" target="1.5" />
       <module name="discovery-service" target="11" />
       <module name="product-microservice" target="1.8" />
+      <module name="TaasBackend" target="1.5" />
       <module name="user-microservice" target="1.8" />
     </bytecodeTargetLevel>
   </component>

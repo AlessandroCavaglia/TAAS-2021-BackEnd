@@ -2,6 +2,8 @@ package esameTAAS.productMicroservice.Controllers;
 
 import esameTAAS.productMicroservice.Models.DB_Example;
 import esameTAAS.productMicroservice.Repositories.DB_ExampleRepository;
+import esameTAAS.productMicroservice.UserMicroServiceApplication;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,13 @@ import java.util.List;
 
 @RestController
 public class DB_ExampleController {
+    private final RabbitTemplate rabbitTemplate;
+
+    public DB_ExampleController( RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
+
+
     @Autowired
     private DB_ExampleRepository repo;
 
@@ -30,6 +39,7 @@ public class DB_ExampleController {
         LocalDateTime now = LocalDateTime.now();
         tmp.setText("Ricevuto richiesta alle "+dtf.format(now)+ "sul server "+ InetAddress.getLocalHost());
         repo.save(tmp);
+        rabbitTemplate.convertAndSend(UserMicroServiceApplication.topicExchangeName, "token-exchange", "BingBong");
         return new ResponseEntity<>("Benvenuto",HttpStatus.OK);
     }
 }
