@@ -1,8 +1,8 @@
-package esameTAAS.productMicroservice.Controllers;
+package esameTAAS.userMicroservice.Controllers;
 
-import esameTAAS.productMicroservice.Models.DB_Example;
-import esameTAAS.productMicroservice.Repositories.DB_ExampleRepository;
-import esameTAAS.productMicroservice.UserMicroServiceApplication;
+import esameTAAS.userMicroservice.Models.DB_Example;
+import esameTAAS.userMicroservice.Repositories.DB_ExampleRepository;
+import esameTAAS.userMicroservice.UserMicroServiceApplication;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

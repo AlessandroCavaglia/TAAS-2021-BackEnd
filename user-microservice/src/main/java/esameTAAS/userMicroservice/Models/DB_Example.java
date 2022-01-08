@@ -1,4 +1,4 @@
-package esameTAAS.productMicroservice.Models;
+package esameTAAS.userMicroservice.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

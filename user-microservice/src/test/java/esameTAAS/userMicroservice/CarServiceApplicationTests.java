@@ -1,4 +1,4 @@
-package esameTAAS.productMicroservice;
+package esameTAAS.userMicroservice;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

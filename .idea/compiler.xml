@@ -8,17 +8,21 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
+        <module name="productMicroservice" />
         <module name="product-microservice" />
-        <module name="discovery-service" />
+        <module name="userMicroservice" />
         <module name="user-microservice" />
+        <module name="discovery-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="api-gateway" target="1.8" />
       <module name="discovery-service" target="11" />
       <module name="product-microservice" target="1.8" />
+      <module name="productMicroservice" target="1.8" />
       <module name="TaasBackend" target="1.5" />
       <module name="user-microservice" target="1.8" />
+      <module name="userMicroservice" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -26,7 +30,9 @@
       <module name="api-gateway" options="-parameters" />
       <module name="discovery-service" options="-parameters" />
       <module name="product-microservice" options="-parameters" />
+      <module name="productMicroservice" options="-parameters" />
       <module name="user-microservice" options="-parameters" />
+      <module name="userMicroservice" options="-parameters" />
     </option>
   </component>
 </project>
