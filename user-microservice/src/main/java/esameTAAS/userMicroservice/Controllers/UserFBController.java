@@ -5,6 +5,8 @@ import esameTAAS.userMicroservice.Models.AccessToken;
 import esameTAAS.userMicroservice.Models.UserFB;
 import esameTAAS.userMicroservice.Repositories.AccessTokenRepository;
 import esameTAAS.userMicroservice.Repositories.UserFBRepository;
+import esameTAAS.userMicroservice.UserMicroServiceApplication;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,22 +19,27 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 public class UserFBController {
+    private final RabbitTemplate rabbitTemplate;
+
+    public UserFBController( RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
     @Autowired
     private UserFBRepository userFBRepository;
     @Autowired
     private AccessTokenRepository accessTokenRepository;
 
-    @GetMapping("/users")
+    @GetMapping("/users")   //TODO testing api
     public List<UserFB> list(){
         return userFBRepository.findAll();
     }
 
-    @GetMapping("/user/token/{username}")
+    @GetMapping("/user/token/{username}") //TODO testing api
     public List<AccessToken> getLastToken(@PathVariable("username") String username){
         return accessTokenRepository.findLastAccessTokenByUsername(username);
     }
 
-    @GetMapping("/token")
+    @GetMapping("/token")   //TODO testing api
     public List<AccessToken> getToken(){
         return accessTokenRepository.findAll();
     }
@@ -67,6 +74,7 @@ public class UserFBController {
         }
         System.out.println(accessToken.toString());
         accessTokenRepository.save(accessToken);
+        rabbitTemplate.convertAndSend(UserMicroServiceApplication.topicExchangeName, "token-exchange", accessToken.serialize());
         return new ResponseEntity<>(userFB.toString() + accessToken.toString(), HttpStatus.OK);
     }
 

@@ -2,6 +2,7 @@ package esameTAAS.productMicroservice;
 
 import com.netflix.discovery.EurekaClient;
 import esameTAAS.productMicroservice.Controllers.DB_ExampleReciever;
+import esameTAAS.productMicroservice.Controllers.Token_Reciever;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -63,7 +64,7 @@ public class ProductMicroServiceApplication {
     }
 
     @Bean
-    MessageListenerAdapter listenerAdapter(DB_ExampleReciever receiver) {
+    MessageListenerAdapter listenerAdapter(Token_Reciever receiver) {
         return new MessageListenerAdapter(receiver, "receiveMessage");
     }
 }

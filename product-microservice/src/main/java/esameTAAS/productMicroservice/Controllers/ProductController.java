@@ -3,6 +3,7 @@ package esameTAAS.productMicroservice.Controllers;
 import esameTAAS.productMicroservice.Models.Comunication.Filter;
 import esameTAAS.productMicroservice.Models.Comunication.ResponseStatus;
 import esameTAAS.productMicroservice.Models.Product;
+import esameTAAS.productMicroservice.Repositories.AccessTokenRepository;
 import esameTAAS.productMicroservice.Repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,10 +20,13 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
-    @GetMapping("/products")
+    @GetMapping("/products")    //TODO TEsting to remove
     public List<Product> list(){
         return productRepository.findAll();
     }
+
+    @Autowired
+    private AccessTokenRepository accessTokenRepository;
 
     @GetMapping("products/productImages")
     public ResponseEntity productImages(@RequestBody Product prodId){
@@ -59,30 +63,47 @@ public class ProductController {
     }
 
     @PostMapping("products/create")
-    public ResponseEntity create(@RequestBody Product product){ //TODO ADD SECURITY TOKEN CONTROL AND SET USERNAME BASED ON TOKEN
+    public ResponseEntity create(@RequestBody Product product,@RequestHeader("access-token") String token){
         ResponseStatus result;
+        TokenController tokenController = new TokenController();
+        String username=tokenController.getUsernameFromToken(token,accessTokenRepository);
+        if(username==null){
+            result= ResponseStatus.UNAUTHORIZED;
+            return new ResponseEntity<>(result.responseNumber+","+result.defaultDescription,result.httpStatus);
+        }
         result=Product.checkProduct(product);
         if(result.equals(ResponseStatus.OK)) {
             result=Product.checkNewProduct(product);
             if(result.equals(ResponseStatus.OK)){
+                product.setUsername(username);
                 productRepository.save(Product.sanitize_product(product));
             }
         }
         return new ResponseEntity<>(result.responseNumber+","+result.defaultDescription,result.httpStatus);
     }
     @PutMapping("products/edit")
-    public ResponseEntity edit(@RequestBody Product newProduct){ //TODO ADD SECURITY TOKEN CONTROL AND CHECK USERNAME IS THE SAME OF THE REQUEST BASED ON TOKEN
+    public ResponseEntity edit(@RequestBody Product newProduct,@RequestHeader("access-token") String token){
         ResponseStatus result;
+        TokenController tokenController = new TokenController();
+        String username=tokenController.getUsernameFromToken(token,accessTokenRepository);
+        if(username==null){
+            result= ResponseStatus.UNAUTHORIZED;
+            return new ResponseEntity<>(result.responseNumber+","+result.defaultDescription,result.httpStatus);
+        }
         result=Product.checkProduct(newProduct);
         if(result.equals(ResponseStatus.OK)) {
             result=Product.checkExistingProduct(newProduct);
             if(result.equals(ResponseStatus.OK)){
-                Optional<Product> oldProduct = productRepository.findById(newProduct.getId());
-                if (oldProduct.isPresent()){
-                    if(oldProduct.get().getUsername().equals(newProduct.getUsername()))
-                        productRepository.save(newProduct);
+                if(newProduct.getUsername().equals(username)){
+                    Optional<Product> oldProduct = productRepository.findById(newProduct.getId());
+                    if (oldProduct.isPresent()){
+                        if(oldProduct.get().getUsername().equals(newProduct.getUsername()))
+                            productRepository.save(newProduct);
+                    }else{
+                        result= ResponseStatus.NOT_FOUND;
+                    }
                 }else{
-                    result= ResponseStatus.NOT_FOUND;
+                    result=ResponseStatus.UNAUTHORIZED;
                 }
             }
         }

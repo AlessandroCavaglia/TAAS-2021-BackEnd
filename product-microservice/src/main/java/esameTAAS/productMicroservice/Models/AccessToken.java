@@ -1,6 +1,4 @@
-package esameTAAS.userMicroservice.Models;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+package esameTAAS.productMicroservice.Models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
