@@ -45,14 +45,14 @@ public class ActionController {
             if(productRepository.existsProductByIdAndEnabledIsTrueAndUsernameNot(action.getProduct_id(),action.getUsername())){
                 actionRepository.save(action);
                 if(action.isLike_action()){
-                    Optional<Action> matchingActions=actionRepository.getMatchingAction(action.getProduct_id(),action.getUsername());
+                    Optional<List<Action>> matchingActions=actionRepository.getMatchingAction(action.getProduct_id(),action.getUsername());
                     if(matchingActions.isPresent()){
                         Match m=new Match();
                         m.setAction1(action.getId());
-                        m.setAction2(matchingActions.get().getId());
+                        m.setAction2(matchingActions.get().get(0).getId());
                         m.setEnabled(true);
                         m.setUsername1(action.getUsername());
-                        m.setUsername2(matchingActions.get().getUsername());
+                        m.setUsername2(matchingActions.get().get(0).getUsername());
                         matchRepository.save(m);
                     }
                 }

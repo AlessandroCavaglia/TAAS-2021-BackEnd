@@ -22,6 +22,7 @@ public class UserMicroServiceApplication {
     private EurekaClient eurekaClient;
 
     public static void main(String[] args) {
+        System.out.println("Starting!");
         SpringApplication.run(UserMicroServiceApplication.class, args);
     }
 

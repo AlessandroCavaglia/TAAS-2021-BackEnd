@@ -39,18 +39,28 @@ public class ProductController {
     }
     //TODO Choose if enhance this function
     @GetMapping("/products/filter")
-    public ResponseEntity filterList(@RequestBody Filter f){
+    public ResponseEntity filterList(@RequestBody Filter f,@RequestHeader("access-token") String token){
         ResponseStatus result=Filter.checkFilter(f);
+        TokenController tokenController = new TokenController();
+        String username=tokenController.getUsernameFromToken(token,accessTokenRepository);
+        if(username==null){
+           username="$";
+        }
         if(result.equals(ResponseStatus.OK)){
-            return new ResponseEntity(getProductsFromFilter(f),result.httpStatus);
+            return new ResponseEntity(getProductsFromFilter(f,username),result.httpStatus);
         }
         return new ResponseEntity<>(result.responseNumber+","+result.defaultDescription,result.httpStatus);
     }
     @GetMapping("/products/filter_no_img")      //Filter function but the result items don't contain the imgs to enable async loading of heavy images
-    public ResponseEntity filterListNoImg(@RequestBody Filter f){
+    public ResponseEntity filterListNoImg(@RequestBody Filter f,@RequestHeader("access-token") String token){
         ResponseStatus result= Filter.checkFilter(f);
+        TokenController tokenController = new TokenController();
+        String username=tokenController.getUsernameFromToken(token,accessTokenRepository);
+        if(username==null){
+            username="$";
+        }
         if(result.equals(ResponseStatus.OK)){
-            List<Product> resultList=getProductsFromFilter(f);
+            List<Product> resultList=getProductsFromFilter(f,username);
             for (Product p:
                  resultList) {
                 p.setImage1(null);
@@ -110,7 +120,7 @@ public class ProductController {
         return new ResponseEntity<>(result.responseNumber+","+result.defaultDescription,result.httpStatus);
     }
 
-    private List<Product> getProductsFromFilter(Filter f){
+    private List<Product> getProductsFromFilter(Filter f,String username){
         List<Product> resultList;
         Float minLatitude,maxLatitude,minLongitude,maxLongitude;
         minLatitude=f.getLatitudePoint() - (f.getRadius()/6378) * (float)(180 / Math.PI);
@@ -119,14 +129,14 @@ public class ProductController {
         maxLongitude=f.getLongitudePoint() + (f.getRadius()/6378) * (float)(180 / Math.PI) / (f.getLatitudePoint()*(float)(Math.PI/180));
         switch (f.getCategoryNumber()){
             case 1:
-                resultList=productRepository.findProducts(f.getCategory1(),minLatitude,maxLatitude,minLongitude,maxLongitude);
+                resultList=productRepository.findProducts(f.getCategory1(),minLatitude,maxLatitude,minLongitude,maxLongitude,username);
                 System.out.println(resultList);
                 break;
             case 2:
-                resultList=productRepository.findProducts(f.getCategory1(),f.getCategory2(),minLatitude,maxLatitude,minLongitude,maxLongitude);
+                resultList=productRepository.findProducts(f.getCategory1(),f.getCategory2(),minLatitude,maxLatitude,minLongitude,maxLongitude,username);
                 break;
             case 3:
-                resultList=productRepository.findProducts(f.getCategory1(),f.getCategory2(),f.getCategory3(),minLatitude,maxLatitude,minLongitude,maxLongitude);
+                resultList=productRepository.findProducts(f.getCategory1(),f.getCategory2(),f.getCategory3(),minLatitude,maxLatitude,minLongitude,maxLongitude,username);
                 break;
             default:
                 resultList=new ArrayList<>();
