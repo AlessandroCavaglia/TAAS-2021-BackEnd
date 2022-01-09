@@ -2,6 +2,7 @@ package esameTAAS.userMicroservice.Controllers;
 
 
 import esameTAAS.userMicroservice.Models.AccessToken;
+import esameTAAS.userMicroservice.Models.Comunication.FacebookInfoUser;
 import esameTAAS.userMicroservice.Models.UserFB;
 import esameTAAS.userMicroservice.Repositories.AccessTokenRepository;
 import esameTAAS.userMicroservice.Repositories.UserFBRepository;
@@ -49,31 +50,30 @@ public class UserFBController {
        return userFBRepository.findUserFBByUsername(value);
     }
 
-    @GetMapping("/login/{token}")
-    public ResponseEntity<String> login(@PathVariable("token") String token) {
+    @PostMapping("/loginFB")
+    public ResponseEntity<String> login(@RequestBody FacebookInfoUser facebookInfoUser) {
         UserFB userFB = new UserFB();
         AccessToken accessToken;
-        String username = "ciccio";
         ResponseStatus result;
-        result = UserFB.checkUsername(username);
+        result = UserFB.checkUsername(facebookInfoUser.getUsername());
         if (!result.equals(ResponseStatus.OK)) //Check username
             return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
         try {
-            accessToken = userFB.initUser(token, username);
+            accessToken = userFB.initUserFB(facebookInfoUser.getToken(), facebookInfoUser.getUsername());
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(ResponseStatus.ERROR_FACEBOOK.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if (userFBRepository.findUserFBByMail(userFB.getEmail()) == null) { //Check if user already insert into DB
-            if (userFBRepository.findUserFBByUsername(username) == null) { //Check if username is correct
+            if (userFBRepository.findUserFBByUsername(facebookInfoUser.getUsername()) == null) { //Check if username is correct
                 userFBRepository.save(userFB);
             } else {
                 return new ResponseEntity(ResponseStatus.ERROR_FACEBOOK.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
 
             }
         }
-        System.out.println(accessToken.toString());
-        accessTokenRepository.save(accessToken);
+        if(accessTokenRepository.findAccessTokenByToken(facebookInfoUser.getToken()) == null) //Check if the token already exist
+            accessTokenRepository.save(accessToken);
         rabbitTemplate.convertAndSend(UserMicroServiceApplication.topicExchangeName, "token-exchange", accessToken.serialize());
         return new ResponseEntity<>(userFB.toString() + accessToken.toString(), HttpStatus.OK);
     }

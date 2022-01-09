@@ -19,7 +19,7 @@ public class UserFB {
     private String email;
 
 
-    public AccessToken initUser(String token, String username) throws Exception{
+    public AccessToken initUserFB(String token, String username) throws Exception{
         AccessToken accessToken = new AccessToken();
         FacebookClient fb = new DefaultFacebookClient(token);
         accessToken.initAccessToken(token,username,fb.debugToken(token).getExpiresAt().toString());
