@@ -6,6 +6,7 @@ public enum ResponseStatus {
     OK(200),
     ERROR(500,"Generic Error"),
     ERROR_FACEBOOK(500,"Error from API facebook"),
+    ERROR_REGISTER(500,"Error from server in registration"),
     NOT_FOUND(404,"Route not found"),
     UNAUTHORIZED(401,"You must be logged to see this content"),
     GENERIC_BAD_REQUEST(400,"There is a problem in your request"),
@@ -14,7 +15,9 @@ public enum ResponseStatus {
     BAD_REQUEST_BAD_TITLE(400,"Your product title isn't acceptable",-4),
     BAD_REQUEST_BAD_DESCRIPTION(400,"Your product description isn't acceptable",-5),
     BAD_REQUEST_NOT_A_NEW_PRODUCT(400,"Your request contains your username or an id therefore isn't a new product",-6),
-    BAD_REQUEST_USERNAME_IS_INVALID(500,"Username invalid");
+    BAD_REQUEST_USERNAME_IS_INVALID(400,"Username invalid"),
+    BAD_REQUEST_USER_NOT_EXIST (404,"Username not found in database"),
+    BAD_REQUEST_WRONG_PASSWORD (403,"Wrong password for selected user");
 
     public String defaultDescription;
     public HttpStatus httpStatus;
