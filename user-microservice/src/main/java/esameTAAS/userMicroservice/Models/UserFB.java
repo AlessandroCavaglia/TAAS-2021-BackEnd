@@ -66,11 +66,11 @@ public class UserFB {
     @Override
     public String toString() {
         return "UserFB{" +
-                "username='" + username + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", birthday='" + birthday + '\'' +
-                ", email='" + email + '\'' +
+                "\"username\": \"" + username + '\"' +
+                ", \"firstName\": \"" + firstName + '\"' +
+                ", \"lastName\" : \"" + lastName + '\"' +
+                ", \"birthday\" : \"" + birthday + '\"' +
+                ", \"email\" : \"" + email + '\"' +
                 '}';
     }
 }

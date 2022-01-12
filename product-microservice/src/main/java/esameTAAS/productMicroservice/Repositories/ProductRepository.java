@@ -20,4 +20,5 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             "SELECT distinct A.product_id FROM Action A WHERE A.username=:username)")
     List<Product> findProducts(@Param("category1") String category1,@Param("category2") String category2,@Param("category3") String category3, @Param("minLat") float minLat, @Param("maxLat") float maxLat, @Param("minLong")float minLong, @Param("maxLong") float maxLong,@Param("username")String username);
     boolean existsProductByIdAndEnabledIsTrueAndUsernameNot(long id,String ownerUsername);
+    List<Product> getProductByUsernameAndEnabledIsTrue(String ownerUsername);
 }

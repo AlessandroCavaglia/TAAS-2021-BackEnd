@@ -36,9 +36,9 @@ public class AccessToken {
     @Override
     public String toString() {
         return "AccessToken{" +
-                "token='" + token + '\'' +
-                ", username='" + username + '\'' +
-                ", expiring_date='" + expiring_date + '\'' +
+                "\"token\" : \"" + token + '\"' +
+                ", \"username\" : \"" + username + '\"' +
+                ", \"expiring_date\" : \"" + expiring_date + '\"' +
                 '}';
 
     }

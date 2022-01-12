@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/v1")
 public class ProductController {
     @Autowired
@@ -118,6 +119,16 @@ public class ProductController {
             }
         }
         return new ResponseEntity<>(result.responseNumber+","+result.defaultDescription,result.httpStatus);
+    }
+    @GetMapping("products/myProducts")
+    private List<Product> getUserProducts(@RequestHeader("access-token") String token){
+        ResponseStatus result;
+        TokenController tokenController = new TokenController();
+        String username=tokenController.getUsernameFromToken(token,accessTokenRepository);
+        if(username==null){
+            return null;
+        }
+        return productRepository.getProductByUsernameAndEnabledIsTrue(username);
     }
 
     private List<Product> getProductsFromFilter(Filter f,String username){

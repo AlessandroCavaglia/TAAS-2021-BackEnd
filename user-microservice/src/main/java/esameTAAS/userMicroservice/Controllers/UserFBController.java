@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/v1")
 public class UserFBController {
     private final RabbitTemplate rabbitTemplate;
@@ -69,7 +70,6 @@ public class UserFBController {
                 userFBRepository.save(userFB);
             } else {
                 return new ResponseEntity(ResponseStatus.ERROR_FACEBOOK.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
-
             }
         }
         if(accessTokenRepository.findAccessTokenByToken(facebookInfoUser.getToken()) == null) //Check if the token already exist
