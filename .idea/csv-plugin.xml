@@ -38,6 +38,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/user-microservice/src/main/java/esameTAAS/userMicroservice/Models/UserFB.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
