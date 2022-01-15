@@ -180,7 +180,7 @@ public class Product {
     }
 
     public static ResponseStatus checkExistingProduct(Product prod){
-        if(prod.getUsername()==null || prod.getId()==null || prod.getEnabled()==null || !prod.getEnabled()){
+        if(prod.getUsername()==null || prod.getId()==null || prod.getEnabled()==null){
             return ResponseStatus.BAD_REQUEST_INVALID_EXISTING_PRODUCT;
         }
         return ResponseStatus.OK;

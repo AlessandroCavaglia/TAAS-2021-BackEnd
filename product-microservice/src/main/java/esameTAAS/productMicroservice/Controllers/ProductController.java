@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:8080")
 @RequestMapping("/api/v1")
 public class ProductController {
     @Autowired
@@ -121,14 +121,14 @@ public class ProductController {
         return new ResponseEntity<>(result.responseNumber+","+result.defaultDescription,result.httpStatus);
     }
     @GetMapping("products/myProducts")
-    private List<Product> getUserProducts(@RequestHeader("access-token") String token){
+    private ResponseEntity getUserProducts(@RequestHeader("access-token") String token){
         ResponseStatus result;
         TokenController tokenController = new TokenController();
         String username=tokenController.getUsernameFromToken(token,accessTokenRepository);
         if(username==null){
-            return null;
+            return new ResponseEntity("",HttpStatus.UNAUTHORIZED);
         }
-        return productRepository.getProductByUsernameAndEnabledIsTrue(username);
+        return new ResponseEntity<>(productRepository.getProductByUsernameAndEnabledIsTrue(username),HttpStatus.OK);
     }
 
     private List<Product> getProductsFromFilter(Filter f,String username){
