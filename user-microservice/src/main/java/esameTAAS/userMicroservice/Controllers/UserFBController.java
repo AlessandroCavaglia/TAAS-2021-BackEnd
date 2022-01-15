@@ -16,6 +16,7 @@ import esameTAAS.userMicroservice.Models.ResponseStatus;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -52,6 +53,27 @@ public class UserFBController {
        return userFBRepository.findUserFBByUsername(value);
     }
 
+    @PostMapping("/user")
+    public ResponseEntity<String> getUser(@RequestBody String token) {
+        User user = accessTokenRepository.findUserByToken(token);
+        AccessToken accessToken;
+        Date parsedDate = null;
+        if(user == null){
+            return new ResponseEntity<>(ResponseStatus.BAD_REQUEST_USER_NOT_EXIST.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        accessToken = accessTokenRepository.findAccessTokenByToken(token);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+        try {
+            parsedDate = dateFormat.parse(accessToken.getExpiring_date());
+            if(parsedDate.after(new Date(System.currentTimeMillis()))){
+                return new ResponseEntity<>(user.toString() + accessToken.toString(), HttpStatus.OK);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(ResponseStatus.UNAUTHORIZED_TOKEN_EXPIRED.defaultDescription, HttpStatus.OK);
+    }
+
     @PostMapping("/loginFB")
     public ResponseEntity<String> loginFB(@RequestBody FacebookInfoUser facebookInfoUser) {
         User user = new User();
@@ -59,7 +81,7 @@ public class UserFBController {
         ResponseStatus result;
         result = User.checkUsername(facebookInfoUser.getUsername());
         if (!result.equals(ResponseStatus.OK)) //Check username
-            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(result.defaultDescription, HttpStatus.BAD_REQUEST);
         try {
             accessToken = user.initUserFB(facebookInfoUser.getToken(), facebookInfoUser.getUsername());
         } catch (Exception e) {

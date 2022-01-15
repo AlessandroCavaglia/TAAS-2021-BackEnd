@@ -9,6 +9,7 @@ public enum ResponseStatus {
     ERROR_REGISTER(500,"Error from server in registration"),
     NOT_FOUND(404,"Route not found"),
     UNAUTHORIZED(401,"You must be logged to see this content"),
+    UNAUTHORIZED_TOKEN_EXPIRED(401,"Token expired"),
     GENERIC_BAD_REQUEST(400,"There is a problem in your request"),
     BAD_REQUEST_UKNOWN_CATEGORY(400,"One of the categories of your product is unknown",-1),
     BAD_REQUEST_MISSING_CATEGORIES(400,"Your product doesn't contains categories",-3),
