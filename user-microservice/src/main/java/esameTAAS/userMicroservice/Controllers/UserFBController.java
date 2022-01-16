@@ -20,7 +20,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/v1")
 public class UserFBController {
     private final RabbitTemplate rabbitTemplate;
@@ -28,6 +29,7 @@ public class UserFBController {
     public UserFBController( RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
+
     @Autowired
     private UserFBRepository userFBRepository;
     @Autowired
