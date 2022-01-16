@@ -20,6 +20,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static esameTAAS.userMicroservice.Models.PlatformUser.getMailFromToken;
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/v1")
@@ -57,11 +59,39 @@ public class UserFBController {
 
     @PostMapping("/user")
     public ResponseEntity<String> getUser(@RequestBody String token) {
+        System.out.println("#############---->ENTRO NELL'API");
         PlatformUser user = accessTokenRepository.findUserByToken(token);
         AccessToken accessToken;
         Date parsedDate = null;
+        System.out.println("#############---->"+user);
+        System.out.println("#############---->"+token);
         if(user == null){
-            return new ResponseEntity<>(ResponseStatus.BAD_REQUEST_USER_NOT_EXIST.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
+            try {
+                System.out.println("#############---->"+token);
+                PlatformUser userTMP = new PlatformUser();
+                accessToken = userTMP.initUserFB(token, "facebookInfoUser.getUsername()"); //TODO: Errore qui non capisco come mai non validi il token (stesso token si valida a riga 118)
+                System.out.println("#############---->"+accessToken.toString());
+                System.out.println("#############---->"+userTMP.getEmail());
+                String email = getMailFromToken(token); //search email from token
+                System.out.println("#############---->"+email);
+                if(email == null) //check of email exist
+                    return new ResponseEntity<>(ResponseStatus.BAD_REQUEST_USER_NOT_EXIST.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
+                user = userFBRepository.findUserByEmail(email); //get user from email
+                System.out.println("#############---->"+user);
+                if(user == null) //check if user exist in database
+                    return new ResponseEntity<>(ResponseStatus.BAD_REQUEST_USER_NOT_EXIST.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
+                System.out.println("#############---->"+user.toString());
+                accessToken = user.initUserFB(token,user.getUsername()); //get access token
+                System.out.println("#############---->"+accessToken.toString());
+                accessTokenRepository.save(accessToken);
+                rabbitTemplate.convertAndSend(UserMicroServiceApplication.topicExchangeName, "token-exchange", accessToken.serialize());
+                return new ResponseEntity<>(user.toString() + accessToken.toString(), HttpStatus.OK);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new ResponseEntity<>(ResponseStatus.BAD_REQUEST_USER_NOT_EXIST.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
         }
         accessToken = accessTokenRepository.findAccessTokenByToken(token);
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);

@@ -33,6 +33,12 @@ public class PlatformUser {
 
     }
 
+    public static String getMailFromToken(String token) throws Exception{
+        FacebookClient fb = new DefaultFacebookClient(token);
+        com.restfb.types.User user = fb.fetchObject("me", com.restfb.types.User.class,  Parameter.with("fields", "id,email,name,birthday,last_name,first_name"));
+        return user.getEmail();
+    }
+
 
     public static ResponseStatus checkUsername(String username){
         if(username==null){
