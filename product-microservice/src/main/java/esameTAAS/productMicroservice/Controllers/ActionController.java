@@ -29,7 +29,7 @@ public class ActionController {
     @Autowired
     private AccessTokenRepository accessTokenRepository;
 
-    @GetMapping("/actions")    //TODO REMOVE, is just for testing purposes
+    @GetMapping("/actions/all")    //TODO REMOVE, is just for testing purposes
     public List<Action> getAllActions(){return actionRepository.findAll();}
 
     @PostMapping("/actions/create")

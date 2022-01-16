@@ -4,7 +4,7 @@ package esameTAAS.userMicroservice.Controllers;
 import esameTAAS.userMicroservice.Models.AccessToken;
 import esameTAAS.userMicroservice.Models.Comunication.BasicInfoUser;
 import esameTAAS.userMicroservice.Models.Comunication.FacebookInfoUser;
-import esameTAAS.userMicroservice.Models.User;
+import esameTAAS.userMicroservice.Models.PlatformUser;
 import esameTAAS.userMicroservice.Repositories.AccessTokenRepository;
 import esameTAAS.userMicroservice.Repositories.UserFBRepository;
 import esameTAAS.userMicroservice.UserMicroServiceApplication;
@@ -36,7 +36,7 @@ public class UserFBController {
     private AccessTokenRepository accessTokenRepository;
 
     @GetMapping("/users")   //TODO testing api
-    public List<User> list(){
+    public List<PlatformUser> list(){
         return userFBRepository.findAll();
     }
 
@@ -51,13 +51,13 @@ public class UserFBController {
     }
 
     @GetMapping("/user/{value}")
-    public User userFromUsername(@PathVariable("value") String value){
-       return userFBRepository.findUserFBByUsername(value);
+    public PlatformUser userFromUsername(@PathVariable("value") String value){
+       return userFBRepository.findUserByUsername(value);
     }
 
     @PostMapping("/user")
     public ResponseEntity<String> getUser(@RequestBody String token) {
-        User user = accessTokenRepository.findUserByToken(token);
+        PlatformUser user = accessTokenRepository.findUserByToken(token);
         AccessToken accessToken;
         Date parsedDate = null;
         if(user == null){
@@ -78,10 +78,10 @@ public class UserFBController {
 
     @PostMapping("/loginFB")
     public ResponseEntity<String> loginFB(@RequestBody FacebookInfoUser facebookInfoUser) {
-        User user = new User();
+        PlatformUser user = new PlatformUser();
         AccessToken accessToken;
         ResponseStatus result;
-        result = User.checkUsername(facebookInfoUser.getUsername());
+        result = PlatformUser.checkUsername(facebookInfoUser.getUsername());
         if (!result.equals(ResponseStatus.OK)) //Check username
             return new ResponseEntity<>(result.defaultDescription, HttpStatus.BAD_REQUEST);
         try {
@@ -90,8 +90,8 @@ public class UserFBController {
             e.printStackTrace();
             return new ResponseEntity<>(ResponseStatus.ERROR_FACEBOOK.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if (userFBRepository.findUserFBByMail(user.getEmail()) == null) { //Check if user already insert into DB
-            if (userFBRepository.findUserFBByUsername(facebookInfoUser.getUsername()) == null) { //Check if username is correct
+        if (userFBRepository.findUserByEmail(user.getEmail()) == null) { //Check if user already insert into DB
+            if (userFBRepository.findUserByUsername(facebookInfoUser.getUsername()) == null) { //Check if username is correct
                 userFBRepository.save(user);
             } else {
                 return new ResponseEntity<>(ResponseStatus.ERROR_FACEBOOK.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -106,10 +106,10 @@ public class UserFBController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody BasicInfoUser basicInfoUser) {
-        if (userFBRepository.findUserFBByUsername(basicInfoUser.getUsername()) == null) { //Check if user exist
+        if (userFBRepository.findUserByUsername(basicInfoUser.getUsername()) == null) { //Check if user exist
             return new ResponseEntity<>(ResponseStatus.BAD_REQUEST_USER_NOT_EXIST.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        User user = userFBRepository.findUserFBByUsername(basicInfoUser.getUsername());
+        PlatformUser user = userFBRepository.findUserByUsername(basicInfoUser.getUsername());
         if(Objects.equals(user.getPassword(), basicInfoUser.getPassword())){
             AccessToken accessToken = new AccessToken();
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH); //Declare date format
@@ -130,12 +130,12 @@ public class UserFBController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user) {
-        ResponseStatus result = User.checkUsername(user.getUsername());
+    public ResponseEntity<String> register(@RequestBody PlatformUser user) {
+        ResponseStatus result = PlatformUser.checkUsername(user.getUsername());
         if (!result.equals(ResponseStatus.OK)) //Check username
             return new ResponseEntity<>(result.defaultDescription, HttpStatus.BAD_REQUEST);
-        if (userFBRepository.findUserFBByMail(user.getEmail()) == null) { //Check if user already insert into DB
-            if (userFBRepository.findUserFBByUsername(user.getUsername()) == null) { //Check if username is correct
+        if (userFBRepository.findUserByEmail(user.getEmail()) == null) { //Check if user already insert into DB
+            if (userFBRepository.findUserByUsername(user.getUsername()) == null) { //Check if username is correct
                 userFBRepository.save(user);
                 login(new BasicInfoUser(user.getUsername(),user.getPassword(),false));
             } else {

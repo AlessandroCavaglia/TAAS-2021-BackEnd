@@ -2,15 +2,13 @@ package esameTAAS.userMicroservice.Models;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
-import io.micrometer.core.lang.Nullable;
 
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.UUID;
 
 @Entity
-public class User {
+public class PlatformUser {
     @Id
     private String username;
     private String firstName;

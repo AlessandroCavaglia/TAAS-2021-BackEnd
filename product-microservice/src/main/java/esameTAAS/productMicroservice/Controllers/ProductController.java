@@ -39,7 +39,7 @@ public class ProductController {
         }
     }
     //TODO Choose if enhance this function
-    @GetMapping("/products/filter")
+    @PostMapping("/products/filter")
     public ResponseEntity filterList(@RequestBody Filter f,@RequestHeader("access-token") String token){
         ResponseStatus result=Filter.checkFilter(f);
         TokenController tokenController = new TokenController();
@@ -47,6 +47,7 @@ public class ProductController {
         if(username==null){
            username="$";
         }
+        System.out.println(username);
         if(result.equals(ResponseStatus.OK)){
             return new ResponseEntity(getProductsFromFilter(f,username),result.httpStatus);
         }

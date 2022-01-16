@@ -36,7 +36,7 @@ public class MatchController {
             result= ResponseStatus.UNAUTHORIZED;
             return new ResponseEntity<>(result.responseNumber+","+result.defaultDescription,result.httpStatus);
         }
-        List<Match> resultList=matchRepository.getMatchByUsername1OrUsername2(username,username);
+        List<Match> resultList=matchRepository.getMatchByUsername1(username);
         return new ResponseEntity<>(resultList, HttpStatus.OK);
     }
     @PutMapping("/matches/edit-match")
