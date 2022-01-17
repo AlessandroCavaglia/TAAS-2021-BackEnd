@@ -58,33 +58,21 @@ public class UserFBController {
     }
 
     @PostMapping("/user")
-    public ResponseEntity<String> getUser(@RequestBody FacebookInfoUser userOBJ) {
-        System.out.println("#############---->ENTRO NELL'API");
-        PlatformUser user = accessTokenRepository.findUserByToken(userOBJ.getToken());
+    public ResponseEntity<String> getUser(@RequestBody FacebookInfoUser facebookInfoUser) {
+        PlatformUser user = accessTokenRepository.findUserByToken(facebookInfoUser.getToken());
         AccessToken accessToken;
         Date parsedDate = null;
-        System.out.println("#############---->"+user);
-        System.out.println("#############---->"+userOBJ.getToken());
         if(user == null){
             try {
-                System.out.println("#############---->"+userOBJ.getToken());
-                PlatformUser userTMP = new PlatformUser();
-                accessToken = userTMP.initUserFB(userOBJ.getToken(), "facebookInfoUser.getUsername()"); //TODO: Errore qui non capisco come mai non validi il token (stesso token si valida a riga 118)
-                System.out.println("#############---->"+accessToken.toString());
-                System.out.println("#############---->"+userTMP.getEmail());
-                String email = getMailFromToken(userOBJ.getToken()); //search email from token
-                System.out.println("#############---->"+email);
+                String email = getMailFromToken(facebookInfoUser.getToken()); //search email from token
                 if(email == null) //check of email exist
                     return new ResponseEntity<>(ResponseStatus.BAD_REQUEST_USER_NOT_EXIST.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
                 user = userFBRepository.findUserByEmail(email); //get user from email
-                System.out.println("#############---->"+user);
                 if(user == null) //check if user exist in database
                     return new ResponseEntity<>(ResponseStatus.BAD_REQUEST_USER_NOT_EXIST.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
-                System.out.println("#############---->"+user.toString());
-                accessToken = user.initUserFB(userOBJ.getToken(),user.getUsername()); //get access token
-                System.out.println("#############---->"+accessToken.toString());
+                accessToken = user.initUserFB(facebookInfoUser.getToken(),user.getUsername()); //get access token
                 accessTokenRepository.save(accessToken);
-                rabbitTemplate.convertAndSend(UserMicroServiceApplication.topicExchangeName, "userOBJ.getToken()-exchange", accessToken.serialize());
+                rabbitTemplate.convertAndSend(UserMicroServiceApplication.topicExchangeName, "token-exchange", accessToken.serialize());
                 return new ResponseEntity<>(user.toString() + accessToken.toString(), HttpStatus.OK);
 
             } catch (Exception e) {
@@ -93,7 +81,7 @@ public class UserFBController {
             }
 
         }
-        accessToken = accessTokenRepository.findAccessTokenByToken(userOBJ.getToken());
+        accessToken = accessTokenRepository.findAccessTokenByToken(facebookInfoUser.getToken());
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
         try {
             parsedDate = dateFormat.parse(accessToken.getExpiring_date());

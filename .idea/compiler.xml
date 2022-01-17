@@ -17,7 +17,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="api-gateway" target="1.8" />
-      <module name="discovery-service" target="11" />
+      <module name="discovery-service" target="1.8" />
       <module name="product-microservice" target="1.8" />
       <module name="productMicroservice" target="1.8" />
       <module name="TaasBackend" target="1.5" />
