@@ -124,10 +124,10 @@ public class UserFBController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody BasicInfoUser basicInfoUser) {
-        if (userFBRepository.findUserByUsername(basicInfoUser.getUsername()) == null) { //Check if user exist
+        PlatformUser user = userFBRepository.findUserByUsername(basicInfoUser.getUsername());
+        if (user == null) { //Check if user exist
             return new ResponseEntity<>(ResponseStatus.BAD_REQUEST_USER_NOT_EXIST.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        PlatformUser user = userFBRepository.findUserByUsername(basicInfoUser.getUsername());
         if(Objects.equals(user.getPassword(), basicInfoUser.getPassword())){
             AccessToken accessToken = new AccessToken();
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH); //Declare date format
@@ -149,15 +149,18 @@ public class UserFBController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody PlatformUser user) {
+        if(user.getEmail() == null || user.getFirstName()== null || user.getLastName() == null || user.getPassword()== null){
+            return new ResponseEntity<>(ResponseStatus.ERROR_REGISTER.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         ResponseStatus result = PlatformUser.checkUsername(user.getUsername());
         if (!result.equals(ResponseStatus.OK)) //Check username
             return new ResponseEntity<>(result.defaultDescription, HttpStatus.BAD_REQUEST);
         if (userFBRepository.findUserByEmail(user.getEmail()) == null) { //Check if user already insert into DB
             if (userFBRepository.findUserByUsername(user.getUsername()) == null) { //Check if username is correct
                 userFBRepository.save(user);
-                login(new BasicInfoUser(user.getUsername(),user.getPassword(),false));
+                return login(new BasicInfoUser(user.getUsername(),user.getPassword(),false));
             } else {
-                return new ResponseEntity<>(ResponseStatus.ERROR_FACEBOOK.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>(ResponseStatus.ERROR_REGISTER.defaultDescription, HttpStatus.INTERNAL_SERVER_ERROR);
 
             }
         }
